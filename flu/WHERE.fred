@@ -1,0 +1,20 @@
+# this condition is used to report the number of people exposed in
+# each type of place:
+condition WHERE {
+  states = None H N S C W O X 
+}
+
+# each agent stay in the state where it was exposed:
+state WHERE.None {}
+state WHERE.H {}
+state WHERE.N {}
+state WHERE.S {}
+state WHERE.C {}
+state WHERE.W {}
+state WHERE.O {}
+state WHERE.X {}
+
+
+
+
+

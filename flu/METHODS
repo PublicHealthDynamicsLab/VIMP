@@ -1,0 +1,16 @@
+# bash script
+
+# fred_delete -f -k bmcvac
+# fred_job -k bmcvac -p main.fred
+
+# fred_delete -f -k treatvac # treatvac and uptake in single vac condition (treatvax.fred)
+# fred_job -k treatvac -p main.fred -t 4
+
+# fred_delete -f -k tvu # treatvac and uptake sep conditions
+# fred_job -k tvu -p main.fred -t 4
+
+# fred_delete -f -k besdidmulti_home_misinf_homewp # besd
+# fred_job -k besdidmulti_home_misinf_homewp -p main.fred -t 4
+
+fred_delete -f -k flu_100 # Mary Krauland and Lexi Mandell's flu model
+fred_job -k flu_100 -p influenzamodel.fred -t 4 -n 100

@@ -1,0 +1,21 @@
+# for tracking agent combined infection and vaccination status
+# most action takes place in INF or VAC conditions
+
+condition TRACK {
+  states = Start NotVac Vac VacInfect NotVacInfect
+}
+
+# agents move to Neither on initialization
+# VAC and INF move agents to other states
+
+state TRACK.Start {
+	default(NotVac)
+	wait(0)
+}
+
+state TRACK.Vac {}
+state TRACK.NotVac {}
+state TRACK.VacInfect {}
+state TRACK.NotVacInfect {}
+
+

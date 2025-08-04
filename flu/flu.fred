@@ -1,0 +1,243 @@
+### H3N2 influenza model with randomly chosen seed agents
+### April 2024
+
+
+
+##########################################
+# SEASONALITY PARAMETERS
+
+# Source: Projecting the transmission dynamics of SARS-CoV-2 through
+# the postpandemic period. Science, 14 Apr 2020.
+
+Global seasonal_reduction
+seasonal_reduction = 0.5 # reduction at summer solstice
+
+Global peak_day_of_year
+peak_day_of_year = 355  # approx Winter solstice
+
+# Don't change these values:
+Global max_transmissibility
+max_transmissibility = 0
+
+Global seasonal_transmissibility
+seasonal_transmissibility = 0
+
+Global days_from_peak
+days_from_peak = -1
+##########################################
+##########################################
+
+condition INF {
+  states = S E Ps Is Ia H Refrac Reset R Died Import ImportWait Seasonality
+  import_start_state = ImportWait
+  transmission_mode = proximity
+  transmissibility = infectious
+  enable_health_records = 1
+  S.is_dormant = 1
+  R.is_dormant = 1
+  exposed_state = E
+}
+
+state INF.S {
+  wait()
+  next()
+}
+
+state INF.E {
+  set(mySus1,0)
+  set_sus(INF,mySus1)
+  set(Infect,1)
+  
+  # report infections by CDC age groups
+  set_state(GROUP,0,E0)
+  set_state(GROUP,5,E5)
+  set_state(GROUP,18,E18)
+  set_state(GROUP,50,E50)
+  set_state(GROUP,65,E65)
+  
+ # track infection by location and age group
+  if (exposed_in(INF,Household)) then set_state(WHERE,None,H)
+  if (exposed_in(INF,Neighborhood)) then set_state(WHERE,None,N)
+  if (exposed_in(INF,School)) then set_state(WHERE,None,S)
+  if (exposed_in(INF,Classroom)) then set_state(WHERE,None,C)
+  if (exposed_in(INF,Workplace)) then set_state(WHERE,None,W)
+  if (exposed_in(INF,Office)) then set_state(WHERE,None,O)
+  if (exposed_externally(INF)) then set_state(WHERE,None,X)
+
+  # track combined vaccination and infection status
+  if (Vax>0) then set_state(TRACK,Vac,VacInfect)
+  if (Vax<1) then set_state(TRACK,NotVac,NotVacInfect)
+
+  wait(24*lognormal(1.9,1.23))
+  # vaccinated agents age 0-64 25% chance of asymptomatic illness
+  if (range(age,0,4),Vax>0) then next(Ia) with prob(0.25)
+  if (range(age,5,17),Vax>0) then next(Ia) with prob(0.25)
+  if (range(age,18,64),Vax>0) then next(Ia) with prob(0.25)
+  # unvaccinated agents 0-64 25% chance of asymptomatic illness
+  if (range(age,0,4),Vax<1) then next(Ia) with prob(0.25)
+  if (range(age,5,17),Vax<1) then next(Ia) with prob(0.25)
+  if (range(age,18,64),Vax<1) then next(Ia) with prob(0.25)
+  # all cases in 65+ are symptomatic
+  if (age>=65) then next(Ps)
+  default(Ps)
+}
+
+
+# presymptomatic infectious
+state INF.Ps {    
+  set_trans(INF,0.5*myInf)
+  wait(24)
+  next(Is)
+}
+
+state INF.Is {
+  set_trans(INF,1*myInf)
+  set_state(StayHome,No,Symptoms)
+  # source for adult vaccinated hospitalization rates: https://academic.oup.com/cid/advance-article/doi/10.1093/cid/ciad677/7456016
+  # source for child vaccinated hospitalization rates: https://academic.oup.com/cid/article/73/9/1722/6193428  
+  # only symptomatic cases can be hospitalized
+  # vaccination gives protection against hospitalization based on age
+  if (Vax>0,age >= 65) then next(H) with prob(0.084545585)
+  if (Vax>0,range(age,50,64)) then next(H) with prob(0.004666089)
+  if (Vax>0,range(age,18,49)) then next(H) with prob(0.002469714)
+  if (Vax>0,range(age,5,17)) then next(H) with prob(0.001754842)
+  if (Vax>0,range(age,0,4)) then next(H) with prob(0.004461846)
+  #unvaccinated agents hospitalized at higher rates than vaccinated agents based on age
+  if (Vax<1,age >= 65) then next(H) with prob(0.096363785)
+  if (Vax<1,range(age,50,64)) then next(H) with prob(0.015482932)
+  if (Vax<1,range(age,18,49)) then next(H) with prob(0.007240753)
+  if (Vax<1,range(age,5,17)) then next(H) with prob(0.004195168)
+  if (Vax<1,range(age,0,4)) then next(H) with prob(0.009551139)
+
+  wait(24* lognormal(5.0,1.5))
+  default(Refrac)
+}
+
+state INF.Ia {
+  set_trans(INF,0.5*myInf)
+  wait(24 * lognormal(5.0, 1.5))
+  next(Refrac)
+}
+
+state INF.H {
+  set_trans(INF,0)
+  
+# report hospitalizations by CDC age groups
+   if (Vax<1,range(age,0,4)) then set_state(GROUP,E0,H0)
+   if (Vax<1,range(age,5,17)) then set_state(GROUP,E5,H5)
+   if (Vax<1,range(age,18,49)) then set_state(GROUP,E18,H18)
+   if (Vax<1,range(age,50,64)) then set_state(GROUP,E50,H50)
+   if (Vax<1,age>=65) then set_state(GROUP,E65,H65)
+   
+# some hospitalized agents die
+# source for decreased death for vaccinated agents: https://www.sciencedirect.com/science/article/pii/S0264410X21005624?dgcid=author
+## unvaccinated agents die at higher rates than vaccinated agents based on age
+  if (Vax<1,age>=65) then next(Died) with prob(0.109740115)
+  if (Vax<1,range(age,50,64)) then next(Died) with prob(0.062108743)
+  if (Vax<1,range(age,18,49)) then next(Died) with prob(0.032577915)
+  if (Vax<1,range(age,5,17)) then next(Died) with prob(0.009510279)
+  if (Vax<1,range(age,0,4)) then next(Died) with prob(0.009190606)
+## vaccinated agents die at lower rates than unvaccinated agents based on age
+  if (Vax>0,age>=65) then next(Died) with prob(0.05409724)
+  if (Vax>0,range(age,50,64)) then next(Died) with prob(0.040255667)
+  if (Vax>0,range(age,18,49)) then next(Died) with prob(0.02171861)
+  if (Vax>0,range(age,5,17)) then next(Died) with prob(0.005594282)
+  if (Vax>0,range(age,0,4)) then next(Died) with prob(0.005594282)
+  
+  wait(0)
+  default(Refrac)
+}
+
+# this state makes agents not susceptible to infection by same or different strain before going to recovered
+state INF.Refrac {
+  set_trans(INF,0)
+  wait(24*0) # can add refractory period in this line
+  set_state(StayHome,Yes,No)
+  next(Reset)
+}
+
+
+# transient state to reset the susceptibility of INF to prior value
+state INF.Reset {
+# in this case not doing anything here
+  wait(0)
+  next(R)
+}
+
+state INF.R {
+
+  if (mySus1<0.85) then set(mySus1,mySus1+0.03) # wane down to 15% protection from prior infection
+  set_sus(INF,mySus1)
+  wait(24*30) # monthly waning in the R state
+  next(R)
+}
+
+state INF.Died {
+  set_trans(INF,0)
+  set_sus(INF,0)
+  
+  #report deaths by CDC age group
+  set_state(GROUP,H0,Died0)
+  set_state(GROUP,H5,Died5)
+  set_state(GROUP,H18,Died18)
+  set_state(GROUP,H50,Died50)
+  set_state(GROUP,H65,Died65)
+  
+  die()
+  wait()
+  next()
+}
+
+
+##########################################
+
+State(INF,ImportWait) {
+  set(max_transmissibility, value(-1,transmissibility_of_INF)) 
+  wait(until_Oct-15)
+  next(Import) 
+}
+
+##########################################
+
+State(INF,Import) {
+  
+  import_count(seedsizevalue)
+  wait(24)
+  next(Seasonality) 
+}
+
+##########################################
+
+State(INF,Seasonality) {
+
+ set(days_from_peak, abs(day_of_year - peak_day_of_year))
+ set(seasonal_transmissibility, infectious * (1.0 - seasonal_reduction*(1 - 0.5*(1+cos(2*3.14159*days_from_peak/365)))))
+ set_trans(INF, seasonal_transmissibility)
+
+  wait(24)
+  next(Seasonality)
+}
+
+##########################################
+
+condition StayHome {
+  states = No Symptoms Yes
+}
+
+state StayHome.No {}
+
+# source for stay at home %: https://wwwnc.cdc.gov/eid/article/26/1/19-0743_article
+state StayHome.Symptoms {
+  wait(0)
+  next(Yes) with prob(0.4) # 40% of agents stay home when sick
+  default(No)
+}
+
+state StayHome.Yes {
+  absent()
+  present(Household)
+  wait()
+  next()
+}
+
+##########################################

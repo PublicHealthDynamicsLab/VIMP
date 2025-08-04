@@ -1,0 +1,59 @@
+##########################################
+# Influenza CDC Age Group Model
+# Author: John Grefenstette, john.grefenstette@epistemix.com
+# Date: Updated 15 April 2020
+#
+
+# Condition for reporting by CDC age groups
+
+Condition GROUP {
+  states = 0 5 18 50 65 \
+	   E0 E5 E18 E50 E65  \
+	   H0 H5 H18 H50 H65  \
+	   Died0 Died5 Died18 Died50 Died65 
+}
+
+# State changes are controlled by Rules in the INF Condition
+# Hospitalization rate of symptomatic cases from CDC
+# Age group
+# 0-4 yrs   0.006971634
+# 5-17 yrs  0.00274194
+# 18-49 yrs  0.005612987
+# 50-64 yrs   0.010604748
+# 65+ yrs    0.090909231
+
+
+
+
+state GROUP.Start {
+  if (range(age,0,4)) then next(0)
+  if (range(age,5,17)) then next(5)
+  if (range(age,18,49)) then next(18)
+  if (range(age,50,64)) then next(50)
+  default(65)
+  wait(0)
+}
+
+state GROUP.0 { }
+state GROUP.5 { }
+state GROUP.18 { }
+state GROUP.50 { }
+state GROUP.65 { }
+state GROUP.E0 { }
+state GROUP.E5 { }
+state GROUP.E18 { }
+state GROUP.E50 { }
+state GROUP.E65 { }
+state GROUP.H0 { }
+state GROUP.H5 { }
+state GROUP.H18 { }
+state GROUP.H50 { }
+state GROUP.H65 { }
+state GROUP.Died0 { }
+state GROUP.Died5 { }
+state GROUP.Died18 { }
+state GROUP.Died50 { }
+state GROUP.Died65 { }
+
+
+

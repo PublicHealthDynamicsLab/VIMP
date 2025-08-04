@@ -1,0 +1,47 @@
+##########################################
+# Set initial population immunity to H3N2 for multistrain influenza model
+# 
+#
+#
+
+# personal variable for whether an agent has prior immunity to H3N2
+my H3Imm
+H3Imm = 0
+
+# personal variable for the value of an agent's susceptibility to H3N2 with prior immunity before being vaccinated or infected (wanes 3% per month until vaccination occurs)
+my H3ImmSus
+H3ImmSus = 0
+
+Condition IMMUNITY {
+  states = Start Set Not 
+	enable_health_records = 1
+	#enable_var_records = 1  
+}
+
+# Immunity from prior infection with H3N2 based on 45% of 3x the estimated burden from 2019-20 to represent prior immunity lasting 3 years and some infections being H1N1 or influenza B (CDC typing data)
+# https://www.cdc.gov/flu/about/burden/2019-2020.html
+state IMMUNITY.Start {
+  if (range(age,0,4)) then next(Set) with prob(0.2508)
+  if (range(age,5,17)) then next(Set) with prob(0.1848)
+  if (range(age,18,49)) then next(Set) with prob(0.1332)
+  if (range(age,50,64)) then next(Set) with prob(0.1608)
+  if (age>=65) then next(Set) with prob(0.0432)
+  default(Not)
+  wait(0)
+}
+
+state IMMUNITY.Set {
+  if (Infect<1,Vax<1,H3Imm<1) then set(mySus1,normal(0.5,0.1)) # decrease in susceptibility from prior infection set using a normal distribution
+  if(Infect<1,Vax<1,H3Imm>0,mySus1<=0.85) then set(mySus1,mySus1+0.03) # wane prior immunity 3% per month for agents not vaccinated or infected
+  set_sus(INF,mySus1)
+  if (H3Imm<1) then set(H3Imm,1)
+  if (Vax<1,H3ImmSus<1) then set(H3ImmSus,mySus1) # keeps track of sus for waning protection after vaccination 
+  default(Set)
+  wait(24*30)
+ }
+
+state IMMUNITY.Not {
+  set_sus(INF,mySus1)
+  default(Not)
+  wait()
+ }
