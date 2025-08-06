@@ -104,9 +104,9 @@ The model's fixed parameters, such as asymptomatic probabilities, hospitalizatio
 
 Specifically, the following OAT scripts were utilized in `cfac_flu/`:
  
- * **METHODS_asymp**: Used to calibrate the age-specific asymptomatic probabilities.
- * **METHODS_hosp_oat**: Used to calibrate the age-specific hospitalization probabilities.
- * **METHODS_death_oat**: Used to calibrate the age-specific death probabilities.
+ * **`METHODS_asymp`**: Used to calibrate the age-specific asymptomatic probabilities.
+ * **`METHODS_hosp_oat`**: Used to calibrate the age-specific hospitalization probabilities.
+ * **`METHODS_death_oat`**: Used to calibrate the age-specific death probabilities.
 
 This iterative OAT approach allowed for fine-tuning of these crucial disease progression parameters to ensure the model's outputs align with observed epidemiological data and established literature values before running the larger vaccination intervention scenarios.
 
