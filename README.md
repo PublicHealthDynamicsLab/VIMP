@@ -16,6 +16,7 @@ This document provides an overview of the [FRED](https://github.com/PublicHealth
     * [Vaccination](#vaccination)
     * [Immunity](#immunity)
     * [Behavioral Response](#behavioral-response)
+    * [Model Calibration](#model-calibration)
 * [🚀 Running the Model & Analysis Approach](#-running-the-model--analysis-approach)
 * [📊 Data Sources](#-data-sources)
   
@@ -96,6 +97,18 @@ The baseline simulation model was calibrated to reflect realistic influenza tran
 ### Behavioral Response
 
   * **Stay-at-Home Behavior**: Symptomatic individuals have a 40% probability of staying home from school or work.
+
+### Model Calibration
+
+The model's fixed parameters, such as asymptomatic probabilities, hospitalization probabilities, and death probabilities, were determined through a one-at-a-time (OAT) parameter sweep calibration process. This involved using dedicated METHODS files to systematically vary each parameter individually while holding all others constant.
+
+Specifically, the following OAT scripts were utilized in `cfac_flu/`:
+ 
+ * **METHODS_asymp**: Used to calibrate the age-specific asymptomatic probabilities.
+ * **METHODS_hosp_oat**: Used to calibrate the age-specific hospitalization probabilities.
+ * **METHODS_death_oat**: Used to calibrate the age-specific death probabilities.
+
+This iterative OAT approach allowed for fine-tuning of these crucial disease progression parameters to ensure the model's outputs align with observed epidemiological data and established literature values before running the larger vaccination intervention scenarios.
 
 -----
 
