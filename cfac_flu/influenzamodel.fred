@@ -1,0 +1,75 @@
+# influenza model
+ 
+# April 2024
+
+locations = Allegheny_County_PA
+
+start_date = 2023-08-15
+
+end_date = 2024-08-09
+
+# population_version = RTI_2010_ver1
+
+population_version = US_2010.v3
+
+# population 3.5 with daycares
+# population_version = US_2010.v3.5
+
+# Record first and final states for each condition for each agent, 
+# with agent info
+# output_population = 1
+# output_population_date_match = -1
+
+
+# global variables
+## seed size
+global seedsizevalue
+seedsizevalue = 50
+
+## transmissibility
+global infectious
+infectious = 0.75
+
+## vaccine effectiveness
+global VE
+VE = 0.40
+
+## monthly waning of vaccine protection
+global VEwane
+VEwane = 0.07
+
+# personal variables
+## personal susceptibility
+my mySus1
+mySus1 = 1
+
+## used for setting individual transmissibility when an agent is infected asymptomatic
+my myInf
+myInf = 1
+
+## indicator for whether a person has been vaccinated
+my Vax
+Vax = 0
+ 
+## indicator for whether a person has been infected
+my Infect
+Infect = 0
+
+# included fred models
+include IMMUNITY.fred
+
+include fluvaccine.fred
+
+include flu.fred
+
+#include antiviral_flu.fred
+
+include TRACK.fred
+
+include WHERE.fred
+
+include GROUP.fred
+
+include breaks.fred
+
+include cfac_params.fred

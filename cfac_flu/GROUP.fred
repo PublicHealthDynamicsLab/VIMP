@@ -1,0 +1,716 @@
+##########################################
+# Influenza CDC Age Group Model
+# Author: John Grefenstette, john.grefenstette@epistemix.com
+# Date: Updated 15 April 2020
+# Modifed: Ben 4/20/25 to include age by race groups.
+
+# Condition for reporting by CDC age groups
+Condition GROUP {
+  states = 0 5 18 50 65 \
+	   E0 E5 E18 E50 E65  \
+	   Is0 Is5 Is18 Is50 Is65  \
+	   H0 H5 H18 H50 H65  \
+	   Died0 Died5 Died18 Died50 Died65 
+}
+# State changes are controlled by Rules in the INF Condition
+# Hospitalization rate of symptomatic cases from CDC
+# Age group
+# 0-4 yrs   0.006971634
+# 5-17 yrs  0.00274194
+# 18-49 yrs  0.005612987
+# 50-64 yrs   0.010604748
+# 65+ yrs    0.090909231
+state GROUP.Start {
+  if (range(age,0,4)) then next(0)
+  if (range(age,5,17)) then next(5)
+  if (range(age,18,49)) then next(18)
+  if (range(age,50,64)) then next(50)
+  default(65)
+  wait(0)
+}
+state GROUP.0 { }
+state GROUP.5 { }
+state GROUP.18 { }
+state GROUP.50 { }
+state GROUP.65 { }
+
+# Exposed states with rules to update ARGROUP states
+state GROUP.E0 { 
+  # Update ARGROUP state based on race when entering E0
+  if (race == 1) then set_state(ARGROUP, White_0, E_White_0)
+  if (race == 2) then set_state(ARGROUP, AfricanAmerican_0, E_AfricanAmerican_0)
+  if (race == 3) then set_state(ARGROUP, AmericanIndian_0, E_AmericanIndian_0)
+  if (race == 4) then set_state(ARGROUP, AlaskaNative_0, E_AlaskaNative_0)
+  if (race == 5) then set_state(ARGROUP, Tribal_0, E_Tribal_0)
+  if (race == 6) then set_state(ARGROUP, Asian_0, E_Asian_0)
+  if (race == 7) then set_state(ARGROUP, HawaiianNative_0, E_HawaiianNative_0)
+  if (race == 8) then set_state(ARGROUP, OtherRace_0, E_OtherRace_0)
+  if (race == 9) then set_state(ARGROUP, MultipleRace_0, E_MultipleRace_0)
+  if (race == -1) then set_state(ARGROUP, UnknownRace_0, E_UnknownRace_0)
+  wait()
+  default()
+}
+
+state GROUP.E5 { 
+  # Update ARGROUP state based on race when entering E5
+  if (race == 1) then set_state(ARGROUP, White_5, E_White_5)
+  if (race == 2) then set_state(ARGROUP, AfricanAmerican_5, E_AfricanAmerican_5)
+  if (race == 3) then set_state(ARGROUP, AmericanIndian_5, E_AmericanIndian_5)
+  if (race == 4) then set_state(ARGROUP, AlaskaNative_5, E_AlaskaNative_5)
+  if (race == 5) then set_state(ARGROUP, Tribal_5, E_Tribal_5)
+  if (race == 6) then set_state(ARGROUP, Asian_5, E_Asian_5)
+  if (race == 7) then set_state(ARGROUP, HawaiianNative_5, E_HawaiianNative_5)
+  if (race == 8) then set_state(ARGROUP, OtherRace_5, E_OtherRace_5)
+  if (race == 9) then set_state(ARGROUP, MultipleRace_5, E_MultipleRace_5)
+  if (race == -1) then set_state(ARGROUP, UnknownRace_5, E_UnknownRace_5)
+  wait()
+  default()
+}
+
+state GROUP.E18 { 
+  # Update ARGROUP state based on race when entering E18
+  if (race == 1) then set_state(ARGROUP, White_18, E_White_18)
+  if (race == 2) then set_state(ARGROUP, AfricanAmerican_18, E_AfricanAmerican_18)
+  if (race == 3) then set_state(ARGROUP, AmericanIndian_18, E_AmericanIndian_18)
+  if (race == 4) then set_state(ARGROUP, AlaskaNative_18, E_AlaskaNative_18)
+  if (race == 5) then set_state(ARGROUP, Tribal_18, E_Tribal_18)
+  if (race == 6) then set_state(ARGROUP, Asian_18, E_Asian_18)
+  if (race == 7) then set_state(ARGROUP, HawaiianNative_18, E_HawaiianNative_18)
+  if (race == 8) then set_state(ARGROUP, OtherRace_18, E_OtherRace_18)
+  if (race == 9) then set_state(ARGROUP, MultipleRace_18, E_MultipleRace_18)
+  if (race == -1) then set_state(ARGROUP, UnknownRace_18, E_UnknownRace_18)
+  wait()
+  default()
+}
+
+state GROUP.E50 { 
+  # Update ARGROUP state based on race when entering E50
+  if (race == 1) then set_state(ARGROUP, White_50, E_White_50)
+  if (race == 2) then set_state(ARGROUP, AfricanAmerican_50, E_AfricanAmerican_50)
+  if (race == 3) then set_state(ARGROUP, AmericanIndian_50, E_AmericanIndian_50)
+  if (race == 4) then set_state(ARGROUP, AlaskaNative_50, E_AlaskaNative_50)
+  if (race == 5) then set_state(ARGROUP, Tribal_50, E_Tribal_50)
+  if (race == 6) then set_state(ARGROUP, Asian_50, E_Asian_50)
+  if (race == 7) then set_state(ARGROUP, HawaiianNative_50, E_HawaiianNative_50)
+  if (race == 8) then set_state(ARGROUP, OtherRace_50, E_OtherRace_50)
+  if (race == 9) then set_state(ARGROUP, MultipleRace_50, E_MultipleRace_50)
+  if (race == -1) then set_state(ARGROUP, UnknownRace_50, E_UnknownRace_50)
+  wait()
+  default()
+}
+
+state GROUP.E65 { 
+  # Update ARGROUP state based on race when entering E65
+  if (race == 1) then set_state(ARGROUP, White_65, E_White_65)
+  if (race == 2) then set_state(ARGROUP, AfricanAmerican_65, E_AfricanAmerican_65)
+  if (race == 3) then set_state(ARGROUP, AmericanIndian_65, E_AmericanIndian_65)
+  if (race == 4) then set_state(ARGROUP, AlaskaNative_65, E_AlaskaNative_65)
+  if (race == 5) then set_state(ARGROUP, Tribal_65, E_Tribal_65)
+  if (race == 6) then set_state(ARGROUP, Asian_65, E_Asian_65)
+  if (race == 7) then set_state(ARGROUP, HawaiianNative_65, E_HawaiianNative_65)
+  if (race == 8) then set_state(ARGROUP, OtherRace_65, E_OtherRace_65)
+  if (race == 9) then set_state(ARGROUP, MultipleRace_65, E_MultipleRace_65)
+  if (race == -1) then set_state(ARGROUP, UnknownRace_65, E_UnknownRace_65)
+  wait()
+  default()
+}
+
+# Infectious Symptomatic states with rules to update ARGROUP states
+state GROUP.Is0 { 
+  # Update ARGROUP state based on race when entering E0
+  # if (race == 1) then set_state(ARGROUP, White_0, E_White_0)
+  # if (race == 2) then set_state(ARGROUP, AfricanAmerican_0, E_AfricanAmerican_0)
+  # if (race == 3) then set_state(ARGROUP, AmericanIndian_0, E_AmericanIndian_0)
+  # if (race == 4) then set_state(ARGROUP, AlaskaNative_0, E_AlaskaNative_0)
+  # if (race == 5) then set_state(ARGROUP, Tribal_0, E_Tribal_0)
+  # if (race == 6) then set_state(ARGROUP, Asian_0, E_Asian_0)
+  # if (race == 7) then set_state(ARGROUP, HawaiianNative_0, E_HawaiianNative_0)
+  # if (race == 8) then set_state(ARGROUP, OtherRace_0, E_OtherRace_0)
+  # if (race == 9) then set_state(ARGROUP, MultipleRace_0, E_MultipleRace_0)
+  # if (race == -1) then set_state(ARGROUP, UnknownRace_0, E_UnknownRace_0)
+  wait()
+  default()
+}
+
+state GROUP.Is5 { 
+  # Update ARGROUP state based on race when entering E5
+  # if (race == 1) then set_state(ARGROUP, White_5, E_White_5)
+  # if (race == 2) then set_state(ARGROUP, AfricanAmerican_5, E_AfricanAmerican_5)
+  # if (race == 3) then set_state(ARGROUP, AmericanIndian_5, E_AmericanIndian_5)
+  # if (race == 4) then set_state(ARGROUP, AlaskaNative_5, E_AlaskaNative_5)
+  # if (race == 5) then set_state(ARGROUP, Tribal_5, E_Tribal_5)
+  # if (race == 6) then set_state(ARGROUP, Asian_5, E_Asian_5)
+  # if (race == 7) then set_state(ARGROUP, HawaiianNative_5, E_HawaiianNative_5)
+  # if (race == 8) then set_state(ARGROUP, OtherRace_5, E_OtherRace_5)
+  # if (race == 9) then set_state(ARGROUP, MultipleRace_5, E_MultipleRace_5)
+  # if (race == -1) then set_state(ARGROUP, UnknownRace_5, E_UnknownRace_5)
+  wait()
+  default()
+}
+
+state GROUP.Is18 { 
+  # Update ARGROUP state based on race when entering E18
+  # if (race == 1) then set_state(ARGROUP, White_18, E_White_18)
+  # if (race == 2) then set_state(ARGROUP, AfricanAmerican_18, E_AfricanAmerican_18)
+  # if (race == 3) then set_state(ARGROUP, AmericanIndian_18, E_AmericanIndian_18)
+  # if (race == 4) then set_state(ARGROUP, AlaskaNative_18, E_AlaskaNative_18)
+  # if (race == 5) then set_state(ARGROUP, Tribal_18, E_Tribal_18)
+  # if (race == 6) then set_state(ARGROUP, Asian_18, E_Asian_18)
+  # if (race == 7) then set_state(ARGROUP, HawaiianNative_18, E_HawaiianNative_18)
+  # if (race == 8) then set_state(ARGROUP, OtherRace_18, E_OtherRace_18)
+  # if (race == 9) then set_state(ARGROUP, MultipleRace_18, E_MultipleRace_18)
+  # if (race == -1) then set_state(ARGROUP, UnknownRace_18, E_UnknownRace_18)
+  wait()
+  default()
+}
+
+state GROUP.Is50 { 
+  # Update ARGROUP state based on race when entering E50
+  # if (race == 1) then set_state(ARGROUP, White_50, E_White_50)
+  # if (race == 2) then set_state(ARGROUP, AfricanAmerican_50, E_AfricanAmerican_50)
+  # if (race == 3) then set_state(ARGROUP, AmericanIndian_50, E_AmericanIndian_50)
+  # if (race == 4) then set_state(ARGROUP, AlaskaNative_50, E_AlaskaNative_50)
+  # if (race == 5) then set_state(ARGROUP, Tribal_50, E_Tribal_50)
+  # if (race == 6) then set_state(ARGROUP, Asian_50, E_Asian_50)
+  # if (race == 7) then set_state(ARGROUP, HawaiianNative_50, E_HawaiianNative_50)
+  # if (race == 8) then set_state(ARGROUP, OtherRace_50, E_OtherRace_50)
+  # if (race == 9) then set_state(ARGROUP, MultipleRace_50, E_MultipleRace_50)
+  # if (race == -1) then set_state(ARGROUP, UnknownRace_50, E_UnknownRace_50)
+  wait()
+  default()
+}
+
+state GROUP.Is65 { 
+  # Update ARGROUP state based on race when entering E65
+  # if (race == 1) then set_state(ARGROUP, White_65, E_White_65)
+  # if (race == 2) then set_state(ARGROUP, AfricanAmerican_65, E_AfricanAmerican_65)
+  # if (race == 3) then set_state(ARGROUP, AmericanIndian_65, E_AmericanIndian_65)
+  # if (race == 4) then set_state(ARGROUP, AlaskaNative_65, E_AlaskaNative_65)
+  # if (race == 5) then set_state(ARGROUP, Tribal_65, E_Tribal_65)
+  # if (race == 6) then set_state(ARGROUP, Asian_65, E_Asian_65)
+  # if (race == 7) then set_state(ARGROUP, HawaiianNative_65, E_HawaiianNative_65)
+  # if (race == 8) then set_state(ARGROUP, OtherRace_65, E_OtherRace_65)
+  # if (race == 9) then set_state(ARGROUP, MultipleRace_65, E_MultipleRace_65)
+  # if (race == -1) then set_state(ARGROUP, UnknownRace_65, E_UnknownRace_65)
+  wait()
+  default()
+}
+
+# Hospitalized states with rules to update ARGROUP states
+state GROUP.H0 { 
+  # Update ARGROUP state based on race when entering H0
+  if (race == 1) then set_state(ARGROUP, E_White_0, H_White_0)
+  if (race == 2) then set_state(ARGROUP, E_AfricanAmerican_0, H_AfricanAmerican_0)
+  if (race == 3) then set_state(ARGROUP, E_AmericanIndian_0, H_AmericanIndian_0)
+  if (race == 4) then set_state(ARGROUP, E_AlaskaNative_0, H_AlaskaNative_0)
+  if (race == 5) then set_state(ARGROUP, E_Tribal_0, H_Tribal_0)
+  if (race == 6) then set_state(ARGROUP, E_Asian_0, H_Asian_0)
+  if (race == 7) then set_state(ARGROUP, E_HawaiianNative_0, H_HawaiianNative_0)
+  if (race == 8) then set_state(ARGROUP, E_OtherRace_0, H_OtherRace_0)
+  if (race == 9) then set_state(ARGROUP, E_MultipleRace_0, H_MultipleRace_0)
+  if (race == -1) then set_state(ARGROUP, E_UnknownRace_0, H_UnknownRace_0)
+  wait()
+  default()
+}
+
+state GROUP.H5 { 
+  # Update ARGROUP state based on race when entering H5
+  if (race == 1) then set_state(ARGROUP, E_White_5, H_White_5)
+  if (race == 2) then set_state(ARGROUP, E_AfricanAmerican_5, H_AfricanAmerican_5)
+  if (race == 3) then set_state(ARGROUP, E_AmericanIndian_5, H_AmericanIndian_5)
+  if (race == 4) then set_state(ARGROUP, E_AlaskaNative_5, H_AlaskaNative_5)
+  if (race == 5) then set_state(ARGROUP, E_Tribal_5, H_Tribal_5)
+  if (race == 6) then set_state(ARGROUP, E_Asian_5, H_Asian_5)
+  if (race == 7) then set_state(ARGROUP, E_HawaiianNative_5, H_HawaiianNative_5)
+  if (race == 8) then set_state(ARGROUP, E_OtherRace_5, H_OtherRace_5)
+  if (race == 9) then set_state(ARGROUP, E_MultipleRace_5, H_MultipleRace_5)
+  if (race == -1) then set_state(ARGROUP, E_UnknownRace_5, H_UnknownRace_5)
+  wait()
+  default()
+}
+
+state GROUP.H18 { 
+  # Update ARGROUP state based on race when entering H18
+  if (race == 1) then set_state(ARGROUP, E_White_18, H_White_18)
+  if (race == 2) then set_state(ARGROUP, E_AfricanAmerican_18, H_AfricanAmerican_18)
+  if (race == 3) then set_state(ARGROUP, E_AmericanIndian_18, H_AmericanIndian_18)
+  if (race == 4) then set_state(ARGROUP, E_AlaskaNative_18, H_AlaskaNative_18)
+  if (race == 5) then set_state(ARGROUP, E_Tribal_18, H_Tribal_18)
+  if (race == 6) then set_state(ARGROUP, E_Asian_18, H_Asian_18)
+  if (race == 7) then set_state(ARGROUP, E_HawaiianNative_18, H_HawaiianNative_18)
+  if (race == 8) then set_state(ARGROUP, E_OtherRace_18, H_OtherRace_18)
+  if (race == 9) then set_state(ARGROUP, E_MultipleRace_18, H_MultipleRace_18)
+  if (race == -1) then set_state(ARGROUP, E_UnknownRace_18, H_UnknownRace_18)
+  wait()
+  default()
+}
+
+state GROUP.H50 { 
+  # Update ARGROUP state based on race when entering H50
+  if (race == 1) then set_state(ARGROUP, E_White_50, H_White_50)
+  if (race == 2) then set_state(ARGROUP, E_AfricanAmerican_50, H_AfricanAmerican_50)
+  if (race == 3) then set_state(ARGROUP, E_AmericanIndian_50, H_AmericanIndian_50)
+  if (race == 4) then set_state(ARGROUP, E_AlaskaNative_50, H_AlaskaNative_50)
+  if (race == 5) then set_state(ARGROUP, E_Tribal_50, H_Tribal_50)
+  if (race == 6) then set_state(ARGROUP, E_Asian_50, H_Asian_50)
+  if (race == 7) then set_state(ARGROUP, E_HawaiianNative_50, H_HawaiianNative_50)
+  if (race == 8) then set_state(ARGROUP, E_OtherRace_50, H_OtherRace_50)
+  if (race == 9) then set_state(ARGROUP, E_MultipleRace_50, H_MultipleRace_50)
+  if (race == -1) then set_state(ARGROUP, E_UnknownRace_50, H_UnknownRace_50)
+  wait()
+  default()
+}
+
+state GROUP.H65 { 
+  # Update ARGROUP state based on race when entering H65
+  if (race == 1) then set_state(ARGROUP, E_White_65, H_White_65)
+  if (race == 2) then set_state(ARGROUP, E_AfricanAmerican_65, H_AfricanAmerican_65)
+  if (race == 3) then set_state(ARGROUP, E_AmericanIndian_65, H_AmericanIndian_65)
+  if (race == 4) then set_state(ARGROUP, E_AlaskaNative_65, H_AlaskaNative_65)
+  if (race == 5) then set_state(ARGROUP, E_Tribal_65, H_Tribal_65)
+  if (race == 6) then set_state(ARGROUP, E_Asian_65, H_Asian_65)
+  if (race == 7) then set_state(ARGROUP, E_HawaiianNative_65, H_HawaiianNative_65)
+  if (race == 8) then set_state(ARGROUP, E_OtherRace_65, H_OtherRace_65)
+  if (race == 9) then set_state(ARGROUP, E_MultipleRace_65, H_MultipleRace_65)
+  if (race == -1) then set_state(ARGROUP, E_UnknownRace_65, H_UnknownRace_65)
+  wait()
+  default()
+}
+
+# Died states with rules to update ARGROUP states
+state GROUP.Died0 { 
+  # Update ARGROUP state based on race when entering Died0
+  if (race == 1) then set_state(ARGROUP, H_White_0, Died_White_0)
+  if (race == 2) then set_state(ARGROUP, H_AfricanAmerican_0, Died_AfricanAmerican_0)
+  if (race == 3) then set_state(ARGROUP, H_AmericanIndian_0, Died_AmericanIndian_0)
+  if (race == 4) then set_state(ARGROUP, H_AlaskaNative_0, Died_AlaskaNative_0)
+  if (race == 5) then set_state(ARGROUP, H_Tribal_0, Died_Tribal_0)
+  if (race == 6) then set_state(ARGROUP, H_Asian_0, Died_Asian_0)
+  if (race == 7) then set_state(ARGROUP, H_HawaiianNative_0, Died_HawaiianNative_0)
+  if (race == 8) then set_state(ARGROUP, H_OtherRace_0, Died_OtherRace_0)
+  if (race == 9) then set_state(ARGROUP, H_MultipleRace_0, Died_MultipleRace_0)
+  if (race == -1) then set_state(ARGROUP, H_UnknownRace_0, Died_UnknownRace_0)
+  wait()
+  default()
+}
+
+state GROUP.Died5 { 
+  # Update ARGROUP state based on race when entering Died5
+  if (race == 1) then set_state(ARGROUP, H_White_5, Died_White_5)
+  if (race == 2) then set_state(ARGROUP, H_AfricanAmerican_5, Died_AfricanAmerican_5)
+  if (race == 3) then set_state(ARGROUP, H_AmericanIndian_5, Died_AmericanIndian_5)
+  if (race == 4) then set_state(ARGROUP, H_AlaskaNative_5, Died_AlaskaNative_5)
+  if (race == 5) then set_state(ARGROUP, H_Tribal_5, Died_Tribal_5)
+  if (race == 6) then set_state(ARGROUP, H_Asian_5, Died_Asian_5)
+  if (race == 7) then set_state(ARGROUP, H_HawaiianNative_5, Died_HawaiianNative_5)
+  if (race == 8) then set_state(ARGROUP, H_OtherRace_5, Died_OtherRace_5)
+  if (race == 9) then set_state(ARGROUP, H_MultipleRace_5, Died_MultipleRace_5)
+  if (race == -1) then set_state(ARGROUP, H_UnknownRace_5, Died_UnknownRace_5)
+  wait()
+  default()
+}
+
+state GROUP.Died18 { 
+  # Update ARGROUP state based on race when entering Died18
+  if (race == 1) then set_state(ARGROUP, H_White_18, Died_White_18)
+  if (race == 2) then set_state(ARGROUP, H_AfricanAmerican_18, Died_AfricanAmerican_18)
+  if (race == 3) then set_state(ARGROUP, H_AmericanIndian_18, Died_AmericanIndian_18)
+  if (race == 4) then set_state(ARGROUP, H_AlaskaNative_18, Died_AlaskaNative_18)
+  if (race == 5) then set_state(ARGROUP, H_Tribal_18, Died_Tribal_18)
+  if (race == 6) then set_state(ARGROUP, H_Asian_18, Died_Asian_18)
+  if (race == 7) then set_state(ARGROUP, H_HawaiianNative_18, Died_HawaiianNative_18)
+  if (race == 8) then set_state(ARGROUP, H_OtherRace_18, Died_OtherRace_18)
+  if (race == 9) then set_state(ARGROUP, H_MultipleRace_18, Died_MultipleRace_18)
+  if (race == -1) then set_state(ARGROUP, H_UnknownRace_18, Died_UnknownRace_18)
+  wait()
+  default()
+}
+
+state GROUP.Died50 { 
+  # Update ARGROUP state based on race when entering Died50
+  if (race == 1) then set_state(ARGROUP, H_White_50, Died_White_50)
+  if (race == 2) then set_state(ARGROUP, H_AfricanAmerican_50, Died_AfricanAmerican_50)
+  if (race == 3) then set_state(ARGROUP, H_AmericanIndian_50, Died_AmericanIndian_50)
+  if (race == 4) then set_state(ARGROUP, H_AlaskaNative_50, Died_AlaskaNative_50)
+  if (race == 5) then set_state(ARGROUP, H_Tribal_50, Died_Tribal_50)
+  if (race == 6) then set_state(ARGROUP, H_Asian_50, Died_Asian_50)
+  if (race == 7) then set_state(ARGROUP, H_HawaiianNative_50, Died_HawaiianNative_50)
+  if (race == 8) then set_state(ARGROUP, H_OtherRace_50, Died_OtherRace_50)
+  if (race == 9) then set_state(ARGROUP, H_MultipleRace_50, Died_MultipleRace_50)
+  if (race == -1) then set_state(ARGROUP, H_UnknownRace_50, Died_UnknownRace_50)
+  wait()
+  default()
+}
+
+state GROUP.Died65 { 
+  # Update ARGROUP state based on race when entering Died65
+  if (race == 1) then set_state(ARGROUP, H_White_65, Died_White_65)
+  if (race == 2) then set_state(ARGROUP, H_AfricanAmerican_65, Died_AfricanAmerican_65)
+  if (race == 3) then set_state(ARGROUP, H_AmericanIndian_65, Died_AmericanIndian_65)
+  if (race == 4) then set_state(ARGROUP, H_AlaskaNative_65, Died_AlaskaNative_65)
+  if (race == 5) then set_state(ARGROUP, H_Tribal_65, Died_Tribal_65)
+  if (race == 6) then set_state(ARGROUP, H_Asian_65, Died_Asian_65)
+  if (race == 7) then set_state(ARGROUP, H_HawaiianNative_65, Died_HawaiianNative_65)
+  if (race == 8) then set_state(ARGROUP, H_OtherRace_65, Died_OtherRace_65)
+  if (race == 9) then set_state(ARGROUP, H_MultipleRace_65, Died_MultipleRace_65)
+  if (race == -1) then set_state(ARGROUP, H_UnknownRace_65, Died_UnknownRace_65)
+  wait()
+  default()
+  wait()
+  default()
+}
+
+
+# Condition for reporting by CDC age groups and race
+Condition ARGROUP {
+  states = White_0 White_5 White_18 White_50 White_65 \
+           AfricanAmerican_0 AfricanAmerican_5 AfricanAmerican_18 AfricanAmerican_50 AfricanAmerican_65 \
+           AmericanIndian_0 AmericanIndian_5 AmericanIndian_18 AmericanIndian_50 AmericanIndian_65 \
+           AlaskaNative_0 AlaskaNative_5 AlaskaNative_18 AlaskaNative_50 AlaskaNative_65 \
+           Tribal_0 Tribal_5 Tribal_18 Tribal_50 Tribal_65 \
+           Asian_0 Asian_5 Asian_18 Asian_50 Asian_65 \
+           HawaiianNative_0 HawaiianNative_5 HawaiianNative_18 HawaiianNative_50 HawaiianNative_65 \
+           OtherRace_0 OtherRace_5 OtherRace_18 OtherRace_50 OtherRace_65 \
+           MultipleRace_0 MultipleRace_5 MultipleRace_18 MultipleRace_50 MultipleRace_65 \
+           UnknownRace_0 UnknownRace_5 UnknownRace_18 UnknownRace_50 UnknownRace_65 \
+           E_White_0 E_White_5 E_White_18 E_White_50 E_White_65 \
+           E_AfricanAmerican_0 E_AfricanAmerican_5 E_AfricanAmerican_18 E_AfricanAmerican_50 E_AfricanAmerican_65 \
+           E_AmericanIndian_0 E_AmericanIndian_5 E_AmericanIndian_18 E_AmericanIndian_50 E_AmericanIndian_65 \
+           E_AlaskaNative_0 E_AlaskaNative_5 E_AlaskaNative_18 E_AlaskaNative_50 E_AlaskaNative_65 \
+           E_Tribal_0 E_Tribal_5 E_Tribal_18 E_Tribal_50 E_Tribal_65 \
+           E_Asian_0 E_Asian_5 E_Asian_18 E_Asian_50 E_Asian_65 \
+           E_HawaiianNative_0 E_HawaiianNative_5 E_HawaiianNative_18 E_HawaiianNative_50 E_HawaiianNative_65 \
+           E_OtherRace_0 E_OtherRace_5 E_OtherRace_18 E_OtherRace_50 E_OtherRace_65 \
+           E_MultipleRace_0 E_MultipleRace_5 E_MultipleRace_18 E_MultipleRace_50 E_MultipleRace_65 \
+           E_UnknownRace_0 E_UnknownRace_5 E_UnknownRace_18 E_UnknownRace_50 E_UnknownRace_65 \
+           H_White_0 H_White_5 H_White_18 H_White_50 H_White_65 \
+           H_AfricanAmerican_0 H_AfricanAmerican_5 H_AfricanAmerican_18 H_AfricanAmerican_50 H_AfricanAmerican_65 \
+           H_AmericanIndian_0 H_AmericanIndian_5 H_AmericanIndian_18 H_AmericanIndian_50 H_AmericanIndian_65 \
+           H_AlaskaNative_0 H_AlaskaNative_5 H_AlaskaNative_18 H_AlaskaNative_50 H_AlaskaNative_65 \
+           H_Tribal_0 H_Tribal_5 H_Tribal_18 H_Tribal_50 H_Tribal_65 \
+           H_Asian_0 H_Asian_5 H_Asian_18 H_Asian_50 H_Asian_65 \
+           H_HawaiianNative_0 H_HawaiianNative_5 H_HawaiianNative_18 H_HawaiianNative_50 H_HawaiianNative_65 \
+           H_OtherRace_0 H_OtherRace_5 H_OtherRace_18 H_OtherRace_50 H_OtherRace_65 \
+           H_MultipleRace_0 H_MultipleRace_5 H_MultipleRace_18 H_MultipleRace_50 H_MultipleRace_65 \
+           H_UnknownRace_0 H_UnknownRace_5 H_UnknownRace_18 H_UnknownRace_50 H_UnknownRace_65 \
+           Died_White_0 Died_White_5 Died_White_18 Died_White_50 Died_White_65 \
+           Died_AfricanAmerican_0 Died_AfricanAmerican_5 Died_AfricanAmerican_18 Died_AfricanAmerican_50 Died_AfricanAmerican_65 \
+           Died_AmericanIndian_0 Died_AmericanIndian_5 Died_AmericanIndian_18 Died_AmericanIndian_50 Died_AmericanIndian_65 \
+           Died_AlaskaNative_0 Died_AlaskaNative_5 Died_AlaskaNative_18 Died_AlaskaNative_50 Died_AlaskaNative_65 \
+           Died_Tribal_0 Died_Tribal_5 Died_Tribal_18 Died_Tribal_50 Died_Tribal_65 \
+           Died_Asian_0 Died_Asian_5 Died_Asian_18 Died_Asian_50 Died_Asian_65 \
+           Died_HawaiianNative_0 Died_HawaiianNative_5 Died_HawaiianNative_18 Died_HawaiianNative_50 Died_HawaiianNative_65 \
+           Died_OtherRace_0 Died_OtherRace_5 Died_OtherRace_18 Died_OtherRace_50 Died_OtherRace_65 \
+           Died_MultipleRace_0 Died_MultipleRace_5 Died_MultipleRace_18 Died_MultipleRace_50 Died_MultipleRace_65 \
+           Died_UnknownRace_0 Died_UnknownRace_5 Died_UnknownRace_18 Died_UnknownRace_50 Died_UnknownRace_65
+}
+
+# Start state that assigns individuals to the correct age-race category
+state ARGROUP.Start {
+  # Age group 0-4 with different races
+  if (race == 1, range(age,0,4)) then next(White_0)
+  if (race == 2, range(age,0,4)) then next(AfricanAmerican_0)
+  if (race == 3, range(age,0,4)) then next(AmericanIndian_0)
+  if (race == 4, range(age,0,4)) then next(AlaskaNative_0)
+  if (race == 5, range(age,0,4)) then next(Tribal_0)
+  if (race == 6, range(age,0,4)) then next(Asian_0)
+  if (race == 7, range(age,0,4)) then next(HawaiianNative_0)
+  if (race == 8, range(age,0,4)) then next(OtherRace_0)
+  if (race == 9, range(age,0,4)) then next(MultipleRace_0)
+  if (race == -1, range(age,0,4)) then next(UnknownRace_0)
+  
+  # Age group 5-17 with different races
+  if (race == 1, range(age,5,17)) then next(White_5)
+  if (race == 2, range(age,5,17)) then next(AfricanAmerican_5)
+  if (race == 3, range(age,5,17)) then next(AmericanIndian_5)
+  if (race == 4, range(age,5,17)) then next(AlaskaNative_5)
+  if (race == 5, range(age,5,17)) then next(Tribal_5)
+  if (race == 6, range(age,5,17)) then next(Asian_5)
+  if (race == 7, range(age,5,17)) then next(HawaiianNative_5)
+  if (race == 8, range(age,5,17)) then next(OtherRace_5)
+  if (race == 9, range(age,5,17)) then next(MultipleRace_5)
+  if (race == -1, range(age,5,17)) then next(UnknownRace_5)
+  
+  # Age group 18-49 with different races
+  if (race == 1, range(age,18,49)) then next(White_18)
+  if (race == 2, range(age,18,49)) then next(AfricanAmerican_18)
+  if (race == 3, range(age,18,49)) then next(AmericanIndian_18)
+  if (race == 4, range(age,18,49)) then next(AlaskaNative_18)
+  if (race == 5, range(age,18,49)) then next(Tribal_18)
+  if (race == 6, range(age,18,49)) then next(Asian_18)
+  if (race == 7, range(age,18,49)) then next(HawaiianNative_18)
+  if (race == 8, range(age,18,49)) then next(OtherRace_18)
+  if (race == 9, range(age,18,49)) then next(MultipleRace_18)
+  if (race == -1, range(age,18,49)) then next(UnknownRace_18)
+  
+  # Age group 50-64 with different races
+  if (race == 1, range(age,50,64)) then next(White_50)
+  if (race == 2, range(age,50,64)) then next(AfricanAmerican_50)
+  if (race == 3, range(age,50,64)) then next(AmericanIndian_50)
+  if (race == 4, range(age,50,64)) then next(AlaskaNative_50)
+  if (race == 5, range(age,50,64)) then next(Tribal_50)
+  if (race == 6, range(age,50,64)) then next(Asian_50)
+  if (race == 7, range(age,50,64)) then next(HawaiianNative_50)
+  if (race == 8, range(age,50,64)) then next(OtherRace_50)
+  if (race == 9, range(age,50,64)) then next(MultipleRace_50)
+  if (race == -1, range(age,50,64)) then next(UnknownRace_50)
+  
+  # Age group 65+ with different races
+  if (race == 1, age >= 65) then next(White_65)
+  if (race == 2, age >= 65) then next(AfricanAmerican_65)
+  if (race == 3, age >= 65) then next(AmericanIndian_65)
+  if (race == 4, age >= 65) then next(AlaskaNative_65)
+  if (race == 5, age >= 65) then next(Tribal_65)
+  if (race == 6, age >= 65) then next(Asian_65)
+  if (race == 7, age >= 65) then next(HawaiianNative_65)
+  if (race == 8, age >= 65) then next(OtherRace_65)
+  if (race == 9, age >= 65) then next(MultipleRace_65)
+  if (race == -1, age >= 65) then next(UnknownRace_65)
+  
+  wait(0)
+}
+
+# Define empty states for each category
+# Base states for White
+state ARGROUP.White_0 { }
+state ARGROUP.White_5 { }
+state ARGROUP.White_18 { }
+state ARGROUP.White_50 { }
+state ARGROUP.White_65 { }
+# Base states for African American
+state ARGROUP.AfricanAmerican_0 { }
+state ARGROUP.AfricanAmerican_5 { }
+state ARGROUP.AfricanAmerican_18 { }
+state ARGROUP.AfricanAmerican_50 { }
+state ARGROUP.AfricanAmerican_65 { }
+# Base states for American Indian
+state ARGROUP.AmericanIndian_0 { }
+state ARGROUP.AmericanIndian_5 { }
+state ARGROUP.AmericanIndian_18 { }
+state ARGROUP.AmericanIndian_50 { }
+state ARGROUP.AmericanIndian_65 { }
+# Base states for Alaska Native
+state ARGROUP.AlaskaNative_0 { }
+state ARGROUP.AlaskaNative_5 { }
+state ARGROUP.AlaskaNative_18 { }
+state ARGROUP.AlaskaNative_50 { }
+state ARGROUP.AlaskaNative_65 { }
+# Base states for Tribal
+state ARGROUP.Tribal_0 { }
+state ARGROUP.Tribal_5 { }
+state ARGROUP.Tribal_18 { }
+state ARGROUP.Tribal_50 { }
+state ARGROUP.Tribal_65 { }
+# Base states for Asian
+state ARGROUP.Asian_0 { }
+state ARGROUP.Asian_5 { }
+state ARGROUP.Asian_18 { }
+state ARGROUP.Asian_50 { }
+state ARGROUP.Asian_65 { }
+# Base states for Hawaiian Native
+state ARGROUP.HawaiianNative_0 { }
+state ARGROUP.HawaiianNative_5 { }
+state ARGROUP.HawaiianNative_18 { }
+state ARGROUP.HawaiianNative_50 { }
+state ARGROUP.HawaiianNative_65 { }
+# Base states for Other Race
+state ARGROUP.OtherRace_0 { }
+state ARGROUP.OtherRace_5 { }
+state ARGROUP.OtherRace_18 { }
+state ARGROUP.OtherRace_50 { }
+state ARGROUP.OtherRace_65 { }
+# Base states for Multiple Race
+state ARGROUP.MultipleRace_0 { }
+state ARGROUP.MultipleRace_5 { }
+state ARGROUP.MultipleRace_18 { }
+state ARGROUP.MultipleRace_50 { }
+state ARGROUP.MultipleRace_65 { }
+# Base states for Unknown Race
+state ARGROUP.UnknownRace_0 { }
+state ARGROUP.UnknownRace_5 { }
+state ARGROUP.UnknownRace_18 { }
+state ARGROUP.UnknownRace_50 { }
+state ARGROUP.UnknownRace_65 { }
+
+# Exposed states for White
+state ARGROUP.E_White_0 { }
+state ARGROUP.E_White_5 { }
+state ARGROUP.E_White_18 { }
+state ARGROUP.E_White_50 { }
+state ARGROUP.E_White_65 { }
+# Exposed states for African American
+state ARGROUP.E_AfricanAmerican_0 { }
+state ARGROUP.E_AfricanAmerican_5 { }
+state ARGROUP.E_AfricanAmerican_18 { }
+state ARGROUP.E_AfricanAmerican_50 { }
+state ARGROUP.E_AfricanAmerican_65 { }
+# Exposed states for American Indian
+state ARGROUP.E_AmericanIndian_0 { }
+state ARGROUP.E_AmericanIndian_5 { }
+state ARGROUP.E_AmericanIndian_18 { }
+state ARGROUP.E_AmericanIndian_50 { }
+state ARGROUP.E_AmericanIndian_65 { }
+# Exposed states for Alaska Native
+state ARGROUP.E_AlaskaNative_0 { }
+state ARGROUP.E_AlaskaNative_5 { }
+state ARGROUP.E_AlaskaNative_18 { }
+state ARGROUP.E_AlaskaNative_50 { }
+state ARGROUP.E_AlaskaNative_65 { }
+# Exposed states for Tribal
+state ARGROUP.E_Tribal_0 { }
+state ARGROUP.E_Tribal_5 { }
+state ARGROUP.E_Tribal_18 { }
+state ARGROUP.E_Tribal_50 { }
+state ARGROUP.E_Tribal_65 { }
+# Exposed states for Asian
+state ARGROUP.E_Asian_0 { }
+state ARGROUP.E_Asian_5 { }
+state ARGROUP.E_Asian_18 { }
+state ARGROUP.E_Asian_50 { }
+state ARGROUP.E_Asian_65 { }
+# Exposed states for Hawaiian Native
+state ARGROUP.E_HawaiianNative_0 { }
+state ARGROUP.E_HawaiianNative_5 { }
+state ARGROUP.E_HawaiianNative_18 { }
+state ARGROUP.E_HawaiianNative_50 { }
+state ARGROUP.E_HawaiianNative_65 { }
+# Exposed states for Other Race
+state ARGROUP.E_OtherRace_0 { }
+state ARGROUP.E_OtherRace_5 { }
+state ARGROUP.E_OtherRace_18 { }
+state ARGROUP.E_OtherRace_50 { }
+state ARGROUP.E_OtherRace_65 { }
+# Exposed states for Multiple Race
+state ARGROUP.E_MultipleRace_0 { }
+state ARGROUP.E_MultipleRace_5 { }
+state ARGROUP.E_MultipleRace_18 { }
+state ARGROUP.E_MultipleRace_50 { }
+state ARGROUP.E_MultipleRace_65 { }
+# Exposed states for Unknown Race
+state ARGROUP.E_UnknownRace_0 { }
+state ARGROUP.E_UnknownRace_5 { }
+state ARGROUP.E_UnknownRace_18 { }
+state ARGROUP.E_UnknownRace_50 { }
+state ARGROUP.E_UnknownRace_65 { }
+
+# Hospitalized states for White
+state ARGROUP.H_White_0 { }
+state ARGROUP.H_White_5 { }
+state ARGROUP.H_White_18 { }
+state ARGROUP.H_White_50 { }
+state ARGROUP.H_White_65 { }
+# Hospitalized states for African American
+state ARGROUP.H_AfricanAmerican_0 { }
+state ARGROUP.H_AfricanAmerican_5 { }
+state ARGROUP.H_AfricanAmerican_18 { }
+state ARGROUP.H_AfricanAmerican_50 { }
+state ARGROUP.H_AfricanAmerican_65 { }
+# Hospitalized states for American Indian
+state ARGROUP.H_AmericanIndian_0 { }
+state ARGROUP.H_AmericanIndian_5 { }
+state ARGROUP.H_AmericanIndian_18 { }
+state ARGROUP.H_AmericanIndian_50 { }
+state ARGROUP.H_AmericanIndian_65 { }
+# Hospitalized states for Alaska Native
+state ARGROUP.H_AlaskaNative_0 { }
+state ARGROUP.H_AlaskaNative_5 { }
+state ARGROUP.H_AlaskaNative_18 { }
+state ARGROUP.H_AlaskaNative_50 { }
+state ARGROUP.H_AlaskaNative_65 { }
+# Hospitalized states for Tribal
+state ARGROUP.H_Tribal_0 { }
+state ARGROUP.H_Tribal_5 { }
+state ARGROUP.H_Tribal_18 { }
+state ARGROUP.H_Tribal_50 { }
+state ARGROUP.H_Tribal_65 { }
+# Hospitalized states for Asian
+state ARGROUP.H_Asian_0 { }
+state ARGROUP.H_Asian_5 { }
+state ARGROUP.H_Asian_18 { }
+state ARGROUP.H_Asian_50 { }
+state ARGROUP.H_Asian_65 { }
+# Hospitalized states for Hawaiian Native
+state ARGROUP.H_HawaiianNative_0 { }
+state ARGROUP.H_HawaiianNative_5 { }
+state ARGROUP.H_HawaiianNative_18 { }
+state ARGROUP.H_HawaiianNative_50 { }
+state ARGROUP.H_HawaiianNative_65 { }
+# Hospitalized states for Other Race
+state ARGROUP.H_OtherRace_0 { }
+state ARGROUP.H_OtherRace_5 { }
+state ARGROUP.H_OtherRace_18 { }
+state ARGROUP.H_OtherRace_50 { }
+state ARGROUP.H_OtherRace_65 { }
+# Hospitalized states for Multiple Race
+state ARGROUP.H_MultipleRace_0 { }
+state ARGROUP.H_MultipleRace_5 { }
+state ARGROUP.H_MultipleRace_18 { }
+state ARGROUP.H_MultipleRace_50 { }
+state ARGROUP.H_MultipleRace_65 { }
+# Hospitalized states for Unknown Race
+state ARGROUP.H_UnknownRace_0 { }
+state ARGROUP.H_UnknownRace_5 { }
+state ARGROUP.H_UnknownRace_18 { }
+state ARGROUP.H_UnknownRace_50 { }
+state ARGROUP.H_UnknownRace_65 { }
+
+# Died states for White
+state ARGROUP.Died_White_0 { }
+state ARGROUP.Died_White_5 { }
+state ARGROUP.Died_White_18 { }
+state ARGROUP.Died_White_50 { }
+state ARGROUP.Died_White_65 { }
+# Died states for African American
+state ARGROUP.Died_AfricanAmerican_0 { }
+state ARGROUP.Died_AfricanAmerican_5 { }
+state ARGROUP.Died_AfricanAmerican_18 { }
+state ARGROUP.Died_AfricanAmerican_50 { }
+state ARGROUP.Died_AfricanAmerican_65 { }
+# Died states for American Indian
+state ARGROUP.Died_AmericanIndian_0 { }
+state ARGROUP.Died_AmericanIndian_5 { }
+state ARGROUP.Died_AmericanIndian_18 { }
+state ARGROUP.Died_AmericanIndian_50 { }
+state ARGROUP.Died_AmericanIndian_65 { }
+# Died states for Alaska Native
+state ARGROUP.Died_AlaskaNative_0 { }
+state ARGROUP.Died_AlaskaNative_5 { }
+state ARGROUP.Died_AlaskaNative_18 { }
+state ARGROUP.Died_AlaskaNative_50 { }
+state ARGROUP.Died_AlaskaNative_65 { }
+# Died states for Tribal
+state ARGROUP.Died_Tribal_0 { }
+state ARGROUP.Died_Tribal_5 { }
+state ARGROUP.Died_Tribal_18 { }
+state ARGROUP.Died_Tribal_50 { }
+state ARGROUP.Died_Tribal_65 { }
+# Died states for Asian
+state ARGROUP.Died_Asian_0 { }
+state ARGROUP.Died_Asian_5 { }
+state ARGROUP.Died_Asian_18 { }
+state ARGROUP.Died_Asian_50 { }
+state ARGROUP.Died_Asian_65 { }
+# Died states for Hawaiian Native
+state ARGROUP.Died_HawaiianNative_0 { }
+state ARGROUP.Died_HawaiianNative_5 { }
+state ARGROUP.Died_HawaiianNative_18 { }
+state ARGROUP.Died_HawaiianNative_50 { }
+state ARGROUP.Died_HawaiianNative_65 { }
+# Died states for Other Race
+state ARGROUP.Died_OtherRace_0 { }
+state ARGROUP.Died_OtherRace_5 { }
+state ARGROUP.Died_OtherRace_18 { }
+state ARGROUP.Died_OtherRace_50 { }
+state ARGROUP.Died_OtherRace_65 { }
+# Died states for Multiple Race
+state ARGROUP.Died_MultipleRace_0 { }
+state ARGROUP.Died_MultipleRace_5 { }
+state ARGROUP.Died_MultipleRace_18 { }
+state ARGROUP.Died_MultipleRace_50 { }
+state ARGROUP.Died_MultipleRace_65 { }
+# Died states for Unknown Race
+state ARGROUP.Died_UnknownRace_0 { }
+state ARGROUP.Died_UnknownRace_5 { }
+state ARGROUP.Died_UnknownRace_18 { }
+state ARGROUP.Died_UnknownRace_50 { }
+state ARGROUP.Died_UnknownRace_65 { }

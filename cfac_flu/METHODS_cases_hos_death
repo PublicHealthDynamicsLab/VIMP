@@ -1,0 +1,150 @@
+#!/bin/bash
+#
+# METHODS for Iterative, Detailed Calibration of the FRED Influenza Model
+#
+# STRATEGY:
+# A full combinatorial sweep of all 14+ parameters is computationally infeasible.
+# This script uses an iterative approach. You should:
+#   1. Define the baseline parameters you want to hold constant.
+#   2. Choose ONE parameter group to sweep (e.g., Asymptomatic Probs).
+#   3. Run the script.
+#   4. Analyze the results and find the best-fitting values from that sweep.
+#   5. Update the BASELINE section below with your new best-fit values.
+#   6. Repeat by choosing the NEXT parameter group to sweep.
+#
+# Example Workflow:
+#   - Run Asymptomatic sweep.
+#   - Find best 'asymp' values. Update BASELINE.
+#   - Run Hospitalization sweep (with new 'asymp' values as baseline).
+#   - Find best 'hosp' values. Update BASELINE.
+#   - Run Death sweep.
+#   - Repeat if necessary.
+#
+
+echo "--- Starting FRED Influenza Iterative Calibration ---"
+
+# ==============================================================================
+# === STEP 1: SET YOUR BASELINE PARAMETERS HERE ===
+# After each successful sweep, update these values with your new best fit.
+# Initially, these can be the model's original default values.
+# ==============================================================================
+BASELINE_ASYMP_0_4=0.25
+BASELINE_ASYMP_5_17=0.70   # From previous analysis, this seemed closer than 0.25
+BASELINE_ASYMP_18_49=0.25
+BASELINE_ASYMP_50_64=0.25
+
+BASELINE_HOSP_MULT_0_4=1.0
+BASELINE_HOSP_MULT_5_17=1.0
+BASELINE_HOSP_MULT_18_49=1.0
+BASELINE_HOSP_MULT_50_64=1.0
+BASELINE_HOSP_MULT_65PLUS=1.0
+
+BASELINE_DEATH_MULT_0_4=1.0
+BASELINE_DEATH_MULT_5_17=1.0
+BASELINE_DEATH_MULT_18_49=1.0
+BASELINE_DEATH_MULT_50_64=1.0
+BASELINE_DEATH_MULT_65PLUS=1.0
+
+# ==============================================================================
+# === STEP 2: CHOOSE WHICH PARAMETER GROUP TO SWEEP ===
+# Uncomment ONE of the following 'run_..._sweep' lines to perform a sweep.
+# Comment out the others.
+# ==============================================================================
+run_asymptomatic_sweep
+#run_hospitalization_sweep
+#run_death_sweep
+
+# Main function to generate the parameter file and run FRED
+# Takes the FRED key and the parameter content string as arguments
+run_fred_job() {
+    local key=$1
+    local params=$2
+
+    echo ">>> Submitting job with key: ${key}"
+    
+    # Create the parameter file
+    cat > ./cfac_params_iterative.fred << EOF
+# --- FRED Iterative Calibration Parameters ---
+${params}
+
+# --- Include baseline vaccination rates (constant for this sweep) ---
+global mo6_to_yr17_vax = 0.554
+global yr18_to_yr49_vax = 0.328
+global yr50_to_yr64_vax = 0.462
+global yr65_plus_vax = 0.697
+EOF
+
+    # Delete any existing simulation with this key
+    fred_delete -f -k "${key}"
+    # Run the job
+    fred_job -k "${key}" -p influenzamodel.fred -t 4 -n 5
+}
+
+
+# --- SWEEP FUNCTION DEFINITIONS ---
+
+run_asymptomatic_sweep() {
+    echo "--- Performing Sweep on Asymptomatic Probabilities ---"
+    # Hold hosp/death params at baseline, sweep each asymp param one-at-a-time.
+    local hosp_death_params="
+global hosp_mult_0_4 = ${BASELINE_HOSP_MULT_0_4}
+global hosp_mult_5_17 = ${BASELINE_HOSP_MULT_5_17}
+global hosp_mult_18_49 = ${BASELINE_HOSP_MULT_18_49}
+global hosp_mult_50_64 = ${BASELINE_HOSP_MULT_50_64}
+global hosp_mult_65plus = ${BASELINE_HOSP_MULT_65PLUS}
+global death_mult_0_4 = ${BASELINE_DEATH_MULT_0_4}
+global death_mult_5_17 = ${BASELINE_DEATH_MULT_5_17}
+global death_mult_18_49 = ${BASELINE_DEATH_MULT_18_49}
+global death_mult_50_64 = ${BASELINE_DEATH_MULT_50_64}
+global death_mult_65plus = ${BASELINE_DEATH_MULT_65PLUS}
+"
+    # Sweep values
+    local sweep_vals=(0.15 0.25 0.35 0.50 0.70)
+    for val in "${sweep_vals[@]}"; do
+        key_val=$(echo "$val" | tr '.' 'p')
+        # Sweep 0-4
+        params="global asymp_prob_0_4 = ${val}; global asymp_prob_5_17 = ${BASELINE_ASYMP_5_17}; global asymp_prob_18_49 = ${BASELINE_ASYMP_18_49}; global asymp_prob_50_64 = ${BASELINE_ASYMP_50_64}; ${hosp_death_params}"
+        run_fred_job "calib_asymp_0-4_${key_val}" "${params}"
+        # Sweep 5-17
+        params="global asymp_prob_0_4 = ${BASELINE_ASYMP_0_4}; global asymp_prob_5_17 = ${val}; global asymp_prob_18_49 = ${BASELINE_ASYMP_18_49}; global asymp_prob_50_64 = ${BASELINE_ASYMP_50_64}; ${hosp_death_params}"
+        run_fred_job "calib_asymp_5-17_${key_val}" "${params}"
+        # ... Add sweeps for 18-49 and 50-64 if needed
+    done
+}
+
+run_hospitalization_sweep() {
+    echo "--- Performing Sweep on Hospitalization Multipliers ---"
+    local asymp_death_params="
+global asymp_prob_0_4 = ${BASELINE_ASYMP_0_4}
+global asymp_prob_5_17 = ${BASELINE_ASYMP_5_17}
+global asymp_prob_18_49 = ${BASELINE_ASYMP_18_49}
+global asymp_prob_50_64 = ${BASELINE_ASYMP_50_64}
+global death_mult_0_4 = ${BASELINE_DEATH_MULT_0_4}
+# ... etc. for all other baseline params
+"
+    # Sweep values - decrease for young, increase for old
+    local sweep_lt65=(0.6 0.8 1.0)
+    local sweep_65p=(1.0 1.2 1.4)
+    for val in "${sweep_lt65[@]}"; do
+        key_val=$(echo "$val" | tr '.' 'p')
+        # Sweep 18-49
+        params="global hosp_mult_18_49 = ${val}; # ... add all other baseline params ... "
+        run_fred_job "calib_hosp_18-49_${key_val}" "${params}"
+    done
+    for val in "${sweep_65p[@]}"; do
+        key_val=$(echo "$val" | tr '.' 'p')
+        # Sweep 65+
+        params="global hosp_mult_65plus = ${val}; # ... add all other baseline params ... "
+        run_fred_job "calib_hosp_65plus_${key_val}" "${params}"
+    done
+    # ...This is an example. You would need to build out the full parameter strings...
+    echo "NOTE: Hospitalization sweep function is a template. You must build out the full parameter strings."
+}
+
+run_death_sweep() {
+    echo "--- Performing Sweep on Death Multipliers ---"
+    # ... Similar logic to the hospitalization sweep ...
+    echo "NOTE: Death sweep function is a template. You must build out the full parameter strings."
+}
+
+echo "--- Script Finished ---"

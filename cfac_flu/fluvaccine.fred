@@ -1,0 +1,70 @@
+#### Influenza Vaccination Model (May 2024)
+#### Vaccination 9/16 for everyone over 6 weeks, immunity occurs over two weeks after each vaccine
+
+#### Output Options
+VAC1.enable_health_records = 0
+
+#### VISUALIZATION
+enable_visualization_layer = 0
+VAC1.Immune.visualize = 0
+VAC1.Immune.is_dormant = 0
+
+condition VAC1 {
+  states = Start Wait Ready Not Receive ImmuneWait Immune
+}
+
+# Immunize by Age, see experiment_readme.txt or 2023-2024 Flu Vaccine Coverage estimates
+state VAC1.Wait {
+  if (range(age_in_years,0.5,17)) then next(Ready) with prob(mo6_to_yr17_vax)
+  if (range(age_in_years,18,49)) then next(Ready) with prob(yr18_to_yr49_vax)
+  if (range(age_in_years,50,64)) then next(Ready) with prob(yr50_to_yr64_vax)
+  if (age_in_years>64) then next(Ready) with prob(yr65_plus_vax)
+  default(Not)
+  wait(until_Sep-16)
+}
+
+state VAC1.Not {
+  default(Not)
+  wait() # wait forever
+}
+
+state VAC1.Ready {
+  default(Receive)
+  wait(24*(uniform(1,45)))
+}
+
+state VAC1.Receive {
+  default(ImmuneWait)
+  wait(0)
+}
+
+state VAC1.ImmuneWait {
+  wait(24*14) # wait two weeks for protection
+  next(Immune)
+}
+
+# All vaccinated agents get some protection, there are no failures
+# Vaccine protection wanes at VEwane% per month
+
+state VAC1.Immune {
+  # Set susceptibility with full VE for vaccinated agents without prior immunity
+  if (Infect<1,Vax<1,H3Imm<1,mySus1>(1-VE)) then set(mySus1,(1-VE))
+  
+  # When vaccinated, agents with prior immunity get a bump in immunity from vaccination proportional to how much protection they have from prior infection and the VE
+  if (Infect<1,Vax<1,H3Imm>0) then set(mySus1,mySus1-(mySus1 * VE))
+  
+  # Vaccine protection wanes VEwane% monthly for vaccinated agents without prior immunity
+  if (Infect<1,Vax>0,H3Imm<1,mySus1<=(1-VEwane)) then set(mySus1,mySus1 + VEwane)
+  
+  # For agents with prior infection and vaccination, immunity wanes at VEwane% per month until they reach immunity level from before vaccination (H3ImSus), then immunity wanes at 3% per month until 15%
+  if (Infect<1,Vax>0,H3Imm>0,mySus1<H3ImmSus) then set(mySus1,mySus1 + VEwane)
+  if (Infect<1,Vax>0,H3Imm>0,range(mySus1,H3ImmSus,0.85)) then set(mySus1,mySus1+0.03)
+  
+  if (Vax<1) then set(Vax,1)
+  set_state(TRACK,NotVac,Vac)
+  set_sus(INF,mySus1)
+  
+  # Wane every 30 days
+  default(Immune)
+  wait(24*30)
+}
