@@ -2,6 +2,7 @@
 <head>
     <!--LINK JQUERY-->
     <link rel="stylesheet" href="server_front.css">
+    <script type="text/javascript" src="server_front.js"></script>
 
     <title>
        Public Health Messaging
@@ -28,42 +29,17 @@
                 Demos
             </p>
         </div>
-        <div class = "dropdowns" id="age">
-            <button id="drop-age">Age</button>
-            <div>
-            
-            <input type="checkbox" id="young-age">
-            <label for="young-age">18-49 years</label>
-            </div>
-            <div>
-            <input type="checkbox" id="middle-age">
-            <label for="young-age">50-64 years</label>
-            </div>
-            <div>
-            <input type="checkbox" id="old-age">
-            <label for="young-age">65+ years</label>
-            </div>
-        </div>
-
-        <div class = "dropdowns" id="svi">
-            <button id="drop-svi">Social Vulnerability Index</button>
-            
-        </div>
-
-        <div class = "dropdowns" id="svi">
-            <button id="drop-insurance">Insurance Status</button>
-            
-        </div>
+        
     </div>
     <div id = "gens">
         <button id="generate-button">Generate message</button>
         <div id = "generations">
             <p id="generationed-text">
-                Friendly reminder to those 18-49 that you too can get and spread COVID! COVID may seem like just a cold now, but has been associated with cardiac health complications even after you’ve fully recovered. Protect your future now and get vaccinated 💉
+                Friendly reminder to those 18-49 that you too can get and spread COVID! COVID may seem like just a cold now, but has been associated with cardiac health complications even after you've fully recovered. Protect your future now and get vaccinated!
             </p>
             <div id="gen-buttons">
-                <button>Get Explanation</button>
-                <button>Translate</button>
+                <button id="explain">Get Explanation</button>
+                <button id="translate">Translate</button>
             </div>
         </div>
     </div>

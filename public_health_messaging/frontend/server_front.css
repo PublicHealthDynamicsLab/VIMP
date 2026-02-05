@@ -6,6 +6,11 @@
   width: 90%;
   margin:auto;
   text-align: center;
+
+}
+
+#filters {
+    overflow-x:scroll;
 }
 
 #vaccine {
@@ -60,10 +65,7 @@ div, p, button {
   margin: 10pt;
 }
 
-.dropdowns {
-  display:flex;
-  flex-direction: column;
-}
+
 
 .dropdowns > div {
   margin:5pt;
@@ -83,13 +85,16 @@ div, p, button {
 }
 
 .dropdowns > button {
-  width:110%;
+  width:100%;
   background-color:#cce2f2;
-  height: 40px;
+  height: 50px;
   border-color:transparent;
   text-align:left;
-  padding-left:10%;
+  padding-left:5%;
+  padding-right:5%;
   font-size:large;
+  text-wrap-mode: nowrap;
+
 }
 
 #gen-buttons > button {
@@ -108,4 +113,12 @@ div, p, button {
   font-size: large;
   font-weight: bold;
   padding:5pt;
+}
+
+.dropdowns {
+  display:flex;
+  flex-direction: column;
+  font-size: large;
+
+
 }
