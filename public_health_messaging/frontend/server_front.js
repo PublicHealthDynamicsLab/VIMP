@@ -1,12 +1,49 @@
 
+function arrayToList(array) {
+    // https://stackoverflow.com/questions/55766543/turn-array-into-list-with-javascript
+    let list = [null,null,null,null,null,null,null,null,null]
+    for (i of array) {
+        list[i] = array[i]
+    }
+    return list
+}
+
 window.onload = function() {
     var id = 0;
     console.log(id);
     getDropdowns()
     //startLoop();
     document.getElementById("generate-button").onclick=prompt
+
+    vacc=document.getElementById("vaccine")
+    for (child in vacc.children) {
+        child = vacc.children[child]
+        if (child.tagName == "BUTTON") {
+            child.onclick = vaccChoose
+        } 
+    }
 }
 
+function vaccChoose() {
+    vacc=document.getElementById("vaccine")
+    deselect = false
+
+    for (i in event.target.classList) {
+        if (event.target.classList[i] == "selected") {
+            deselect = true
+        }
+    }
+
+    for (child in vacc.children) {
+        child = vacc.children[child]
+        if (child.tagName == "BUTTON") {
+            child.classList=["vac-button"]
+        }
+    }
+    if (!deselect) {
+        event.target.classList.add("selected")
+    }
+}
 
 function getDropdowns() {
     
@@ -36,7 +73,7 @@ function handleDrops(resp_json) {
         new_el.onclick = hideSiblings;
         new_el.innerText = title
         new_el.title = title
-        new_el.classList.add()
+        //new_el.classList.add()
 
         new_div.appendChild(new_el)
 
@@ -63,10 +100,8 @@ function handleDrops(resp_json) {
 function hideSiblings() {
     console.log(event.target)
     childs=event.target.parentElement.children
-    console.log(childs)
     for (child in childs) {
         child = childs[child]
-        console.log(child.tagName)
         if (child.tagName == "DIV") {
             console.log(child.id)
             if (child.hidden) {
@@ -85,11 +120,15 @@ function hideSiblings() {
 }
 
 function prompt() {
-    fetch(document.URL, {
-      method: "POST",body: JSON.stringify({
+    body = JSON.stringify({
       title: "prompt",
-      text: document.getElementById("prompt").value
-    }), headers: {
+      text: document.getElementById("prompt").value,
+      vacc: getVacc(),
+      filters: getFilters()
+    })
+    console.log(body)
+    fetch(document.URL, {
+      method: "POST",body: body, headers: {
       "Content-type": "application/json; charset=UTF-8"
     }
     }).then((response) => response.json())
@@ -99,4 +138,48 @@ function prompt() {
 function llmFiller(response) {
     console.log(response)
     document.getElementById("generationed-text").textContent=response["content"]
+}
+
+
+function getVacc() {
+    vaccs=document.getElementsByClassName("vac-button");
+    selected = "all"
+    for (vacc of vaccs) {
+        //vacc=vaccs[i]
+
+
+        for (i in vacc.classList) {
+            if (vacc.classList[i] == "selected") {
+                selected = vacc.textContent
+            }
+        }
+    }
+    console.log(selected)
+    return vacc.textContent
+}
+
+function getFilters() {
+    filters = {}
+    for (dropdown of document.getElementsByClassName("dropdowns")) {
+        drop_id = dropdown.id
+        dropdownl = []
+        for (select of dropdown.children) {
+            if (!select.hidden && select.tagName == "DIV") {
+                for (label of select.children) {
+                    if (label.tagName == "INPUT" && label.checked) {
+                        dropdownl.push(label.id)
+                    } else {
+                        console.log(label.tagName)
+                    }
+                }
+            }
+        }
+
+        if (dropdownl.length > 0){
+            filters[drop_id]= dropdownl
+        }
+    }
+    console.log(filters)
+    //return {0:[0,1,2,3]}
+    return filters
 }

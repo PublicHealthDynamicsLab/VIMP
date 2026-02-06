@@ -93,7 +93,11 @@ class ServerCore:
     def handle_request(self, request, client_socket):
         # Parse the request
         
-        (request_method, path, request_version, headers) = requestUtil.parse_request(request)
+        try:
+            (request_method, path, request_version, headers) = requestUtil.parse_request(request)
+        except:
+            self.handle_get(request)
+            return
         # Check the request method
         if request_method == "GET":
             response = self.handle_get(request)
