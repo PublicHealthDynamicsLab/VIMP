@@ -1,25 +1,36 @@
 from ollamawrap import req, proc
-from pandas import DataFrame
+from LoadData import LoadData
 
 
-def makePrompt(prompt, demographics, data):
-    return [#{"role":"system","content":"Generate an appropriate announcement that will be released by public health officials."},
+def makePrompt(prompt, loc, vacc, data):
+    print(data)
+    demo_text = f"Generate a mission targeted towards people in {loc} about {vacc}. Use the following survey responses:\n"
+    for group in data:
+        for row in group:
+            print(row)
+            demo, spec, survey, val = row
+            demo_text += demo+f"({spec})\n"
+            demo_text+=survey
+            demo_text +=": "
+            demo_text += str(val)+"\n"
+        
+    
+    return [{"role":"user","content":demo_text},
+        #{"role":"system","content":"Generate an appropriate announcement that will be released by public health officials."},
             #{"role":"user","content":data},
             #{"role":"user","content":f"Your announcement should be targeted toward the following group: {demographics}."},
 {"role":"user","content":f"""{prompt}"""}]
 
 
 class LlmBackbone:
-    def __init__(self, data:DataFrame, model:str="gemma3:270m"):
+    def __init__(self, data:LoadData, model:str="gemma3:270m"):
         self.data=data
         self.model=model
         
-    def run(self,prompt, filters):
-        demographics, curdata = self.data(filters)
-        #try:
-        demographics=""
-        curdata=""
-        genprompt=makePrompt(prompt, demographics, curdata)
+    def run(self,prompt, loc, vacc, filters):
+        
+        data = self.data(loc, vacc, filters)
+        genprompt=makePrompt(prompt, loc, vacc, data)
         print(genprompt)
         resp=req(self.model,genprompt)
         print(resp)

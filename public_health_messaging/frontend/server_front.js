@@ -22,6 +22,8 @@ window.onload = function() {
             child.onclick = vaccChoose
         } 
     }
+
+    getRegions()
 }
 
 function vaccChoose() {
@@ -120,10 +122,12 @@ function hideSiblings() {
 }
 
 function prompt() {
+    console.log(document.getElementById("location-drop").value)
     body = JSON.stringify({
       title: "prompt",
       text: document.getElementById("prompt").value,
       vacc: getVacc(),
+      loc: document.getElementById("location-drop").value,
       filters: getFilters()
     })
     console.log(body)
@@ -182,4 +186,27 @@ function getFilters() {
     console.log(filters)
     //return {0:[0,1,2,3]}
     return filters
+}
+
+function getRegions() {
+    fetch(document.URL, {
+      method: "POST",body: JSON.stringify({
+      title: "locations",
+    }), headers: {
+      "Content-type": "application/json; charset=UTF-8"
+    }
+    }).then((response) => response.json())
+    .then(handleRegions)
+}
+
+function handleRegions(resp) {
+    console.log(resp)
+    resp = resp["Contents"]
+    dropper=document.getElementById("location-drop")
+    for (label of resp) {
+        opt=document.createElement("option")
+        opt.value=label
+        opt.textContent=label
+        dropper.appendChild(opt)
+    }
 }

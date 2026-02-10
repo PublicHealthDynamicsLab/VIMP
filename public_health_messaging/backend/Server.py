@@ -13,6 +13,7 @@ dropdown_prep = data.get_demographics()
 out_data = sorted(list(data.get_demographics()))
 out_data = {demo:list(data.get_dropdowns(demo)) for demo in out_data}
 out_data = {demo:out_data[demo] for demo in out_data if len(out_data[demo]) > 1}
+locations= data.get_regions()
 
 backbone = LlmBackbone(data)
 
@@ -81,7 +82,7 @@ class ServerCore:
             response = requestUtil.build_response(200, body, content_type = "application/json")
             return response
         elif request_body["title"] == "prompt":
-            resp=backbone.run(str(request_body["text"]),None)
+            resp=backbone.run(str(request_body["text"]),request_body["loc"], request_body["vacc"], request_body["filters"])
             print(resp)
             out_json = {"content":resp}
             
@@ -89,7 +90,13 @@ class ServerCore:
         
             response = requestUtil.build_response(200, body, content_type = "application/json")
             return response
+        elif request_body["title"] == "locations":
+            out_json = {"Contents":list(locations)}
             
+            body = json.dumps(out_json)
+        
+            response = requestUtil.build_response(200, body, content_type = "application/json")
+            return response
     def handle_request(self, request, client_socket):
         # Parse the request
         

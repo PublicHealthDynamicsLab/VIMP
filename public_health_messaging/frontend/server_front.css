@@ -126,3 +126,7 @@ div, p, button {
 .selected {
   background-color:firebrick
 }
+
+#generated-text {
+  white-space: pre-line
+}
