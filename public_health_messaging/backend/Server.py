@@ -97,6 +97,12 @@ class ServerCore:
         
             response = requestUtil.build_response(200, body, content_type = "application/json")
             return response
+        elif request_body["title"] == "explain":
+            out_json=backbone.last
+            body = json.dumps(out_json)
+            response = requestUtil.build_response(200, body, content_type = "application/json")
+            return response
+
     def handle_request(self, request, client_socket):
         # Parse the request
         

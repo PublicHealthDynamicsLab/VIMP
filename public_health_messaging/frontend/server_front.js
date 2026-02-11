@@ -24,6 +24,7 @@ window.onload = function() {
     }
 
     getRegions()
+    document.getElementById("explain").onclick = getExplain
 }
 
 function vaccChoose() {
@@ -142,6 +143,7 @@ function prompt() {
 function llmFiller(response) {
     console.log(response)
     document.getElementById("generationed-text").textContent=response["content"]
+    document.getElementById("explanation").hidden = true
 }
 
 
@@ -159,7 +161,7 @@ function getVacc() {
         }
     }
     console.log(selected)
-    return vacc.textContent
+    return selected
 }
 
 function getFilters() {
@@ -209,4 +211,40 @@ function handleRegions(resp) {
         opt.textContent=label
         dropper.appendChild(opt)
     }
+}
+
+function getExplain() {
+     fetch(document.URL, {
+      method: "POST",body: JSON.stringify({
+      title: "explain",
+    }), headers: {
+      "Content-type": "application/json; charset=UTF-8"
+    }
+    }).then((response) => response.json())
+    .then(handleExplanation)
+}
+
+function handleExplanation(resp) {
+    el=document.getElementById("explanation")
+    el.textContent=""
+    
+    el.children=[]
+    el.hidden = false
+
+    table = document.createElement("table")
+    console.log(resp)
+    for (arr of resp) {
+        for (arr2 of arr) {
+            row=document.createElement("tr")
+            for (val of arr2) {
+                col = document.createElement("td")
+                col.textContent = val
+                console.log(val)
+                row.appendChild(col)
+            }
+            table.appendChild(row)
+        }
+    }
+    el.appendChild(table)
+    console.log(el)
 }

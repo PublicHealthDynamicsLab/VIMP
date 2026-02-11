@@ -26,10 +26,12 @@ class LlmBackbone:
     def __init__(self, data:LoadData, model:str="gemma3:270m"):
         self.data=data
         self.model=model
+        self.last = "No previous query"
         
     def run(self,prompt, loc, vacc, filters):
         
         data = self.data(loc, vacc, filters)
+        self.last = data
         genprompt=makePrompt(prompt, loc, vacc, data)
         print(genprompt)
         resp=req(self.model,genprompt)
