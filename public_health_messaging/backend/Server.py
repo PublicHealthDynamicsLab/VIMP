@@ -15,7 +15,7 @@ out_data = {demo:list(data.get_dropdowns(demo)) for demo in out_data}
 out_data = {demo:out_data[demo] for demo in out_data if len(out_data[demo]) > 1}
 locations= data.get_regions()
 
-backbone = LlmBackbone(data)
+backbone = LlmBackbone(data, model="gemma3:270m")
 
 class ServerCore:
     
