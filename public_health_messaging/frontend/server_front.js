@@ -142,7 +142,7 @@ function prompt() {
 
 function llmFiller(response) {
     console.log(response)
-    document.getElementById("generationed-text").textContent=response["content"]
+    document.getElementById("generationed-text").innerHTML=marked.parse(response["content"])
     document.getElementById("explanation").hidden = true
 }
 
@@ -232,7 +232,16 @@ function handleExplanation(resp) {
     el.hidden = false
 
     table = document.createElement("table")
+    table.id = "exptable"
     console.log(resp)
+    first_row =document.createElement("tr")
+    for (text of ["Category", "Label","Measurement", "Population Percentage (%)"]) {
+        col = document.createElement("td")
+        col.textContent = text
+        first_row.appendChild(col)
+    }
+    table.appendChild(first_row)
+
     for (arr of resp) {
         for (arr2 of arr) {
             row=document.createElement("tr")

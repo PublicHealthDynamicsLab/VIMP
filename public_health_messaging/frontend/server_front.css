@@ -130,3 +130,17 @@ div, p, button {
 #generated-text {
   white-space: pre-line
 }
+
+#exptable>tr {
+  display:contents;
+}
+
+#exptable>tr>td {
+  text-align:center;
+}
+
+#exptable {
+  display:grid;
+  grid-template-columns: repeat(4, auto);
+
+}

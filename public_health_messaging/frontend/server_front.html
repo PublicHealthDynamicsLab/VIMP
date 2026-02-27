@@ -3,6 +3,7 @@
     <!--LINK JQUERY-->
     <link rel="stylesheet" href="server_front.css">
     <script type="text/javascript" src="server_front.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
 
     <title>
        Public Health Messaging
@@ -39,15 +40,15 @@
     </div>
     <div id = "gens">
         <button id="generate-button">Generate message</button>
-        <div id = "generations">
-            <p id="generationed-text">
+        <span id = "generations">
+            <span id="generationed-text" markdown="1">
                 Friendly reminder to those 18-49 that you too can get and spread COVID! COVID may seem like just a cold now, but has been associated with cardiac health complications even after you've fully recovered. Protect your future now and get vaccinated!
-            </p>
+            </span>
             <div id="gen-buttons">
                 <button id="explain">Get Explanation</button>
                 <button id="translate">Translate</button>
             </div>
-        </div>
+        </span>
         <div id="explanation" hidden>
             TEsts
         </div>
