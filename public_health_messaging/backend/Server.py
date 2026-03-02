@@ -17,6 +17,8 @@ locations= data.get_regions()
 
 backbone = LlmBackbone(data, model="gemma3:270m")
 
+data.get_language_exp(backbone)
+
 class ServerCore:
     
     def __init__(self):
@@ -83,7 +85,7 @@ class ServerCore:
             return response
         elif request_body["title"] == "prompt":
             resp=backbone.run(str(request_body["text"]),request_body["loc"], request_body["vacc"], request_body["filters"])
-            print(resp)
+            #print(resp)
             out_json = {"content":resp}
             
             body = json.dumps(out_json)

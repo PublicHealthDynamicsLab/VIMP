@@ -1,20 +1,24 @@
 import pandas as pd
 
+import tqdm
 
 class LoadData:
     def __init__(self, fpath="public_health_messaging/backend/National_Immunization_Survey_Fall_Respiratory_Virus_Module_(NIS-FRVM)__RespVaxView__Data___Centers_for_Disease_Control_and_Prevention_(cdc.gov)_20260203.csv"):
         self.data = pd.read_csv(fpath)
         self.quicks={}
+        self.explanations = {}
+        ptotal=len(self.get_regions()) * len(set(self.data["Vaccine"])) * len(self.get_demographics())
+        pbar = tqdm.tqdm(total=ptotal)
         for loc in self.get_regions():
             for vacc in set(self.data["Vaccine"]):
                 for demo in self.get_demographics():
+                    pbar.update(1)
+
                     for val in self.get_dropdowns(demo):
-                        
                         self.quicks[(loc, vacc,demo,val)] =self.__filter(loc, vacc,demo, val)
-                        break
-                    break
                 break
-            
+            break
+        
     def get_regions(self):
         return set(self.data["Geography"])
     
@@ -37,7 +41,7 @@ class LoadData:
             #print(data["Vaccine"])
             data = data.where(self.data["Vaccine"] == vacc).dropna()
             
-            ret = [(row["Group Name"], row["Group Category"], row["Indicator Name "], row["Estimate (%)"]) for i, row in data.iterrows()]
+            ret = [[row["Group Name"], row["Group Category"], row["Indicator Name "], row["Estimate (%)"]] for i, row in data.iterrows()]
             
             if len(ret) > 0:
                 return ret
@@ -51,8 +55,13 @@ class LoadData:
         if len(filters) == 0:
             results.append(self.__filter(loc, vacc, demographic="All adults 18+ years", val="All adults 18+ years"))
         
-        print(results)
+        #print(results)
         return results
+    def get_language_exp(self,backbone):
+        for (loc, vacc,demo,val) in self.quicks:
+            self.explanations[(loc, vacc, demo)]=backbone.prep_explanation(loc, vacc, demo, val)
+            #print(loc, vacc, demo, val)
+            #print(self.explanations[(loc, vacc, demo)])
     
 if __name__ == "__main__":
     data= LoadData()

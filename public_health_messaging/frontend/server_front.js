@@ -235,7 +235,7 @@ function handleExplanation(resp) {
     table.id = "exptable"
     console.log(resp)
     first_row =document.createElement("tr")
-    for (text of ["Category", "Label","Measurement", "Population Percentage (%)"]) {
+    for (text of ["Category", "Label","Measurement", "Population Percentage (%)", "Description"]) {
         col = document.createElement("td")
         col.textContent = text
         first_row.appendChild(col)
